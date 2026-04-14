@@ -248,7 +248,7 @@ select option{background:var(--bg3)}
   <div class="sbrand">
     <div class="savatar">ก้</div>
     <div class="sbrand-name">Kong AI Studio</div>
-    <div class="sbrand-sub">Claude · kie.ai · PostForMe · v7.0</div>
+    <div class="sbrand-sub">Claude · Grok · kie.ai · v9.0</div>
   </div>
   <nav class="snav">
     <div class="nsec">หลัก</div>
@@ -295,7 +295,7 @@ select option{background:var(--bg3)}
         <div id="dash-recent"><div class="empty"><div class="empty-icon">🎬</div><div>ยังไม่มีงาน</div></div></div>
       </div>
       <div class="alert alert-blue">
-        💡 <strong>Flow v7:</strong> Claude เขียน Script → kie.ai สร้างภาพ Reference → kie.ai สร้างวิดีโอทีละฉาก → <strong>Preview ก่อนโพสต์</strong> → PostForMe โพสต์ FB + TikTok + YouTube
+        💡 <strong>Flow v9:</strong> ใส่ Key → ทดสอบ ✅ → Claude Script → Grok Image → Grok Video 30วิ + เสียง → <strong>Preview ก่อนโพสต์</strong> → PostForMe FB + TikTok + YouTube
       </div>
     </div>
 
@@ -341,11 +341,11 @@ select option{background:var(--bg3)}
           </div>
 
           <div class="alert alert-gold" style="margin-bottom:16px">
-            🎬 <strong>30 วินาที</strong> — Claude เขียน Script 5 ฉาก → kie.ai สร้างภาพ Reference → kie.ai สร้างวิดีโอฉากละ 6 วิ รวม 5 ฉาก
+            🎬 <strong>30 วินาที</strong> — Claude เขียน Script 5 ฉาก → Grok Aurora สร้างภาพ Reference → Grok Video + Extend × 4 = 30 วิ พร้อมเสียงในตัว
           </div>
 
           <div class="alert alert-blue" style="margin-bottom:16px">
-            💰 <strong>ต้นทุนต่อคลิป ≈ ฿20</strong> (kie.ai ภาพ ~$0.02 + วิดีโอ ~$0.50 + Claude ~$0.01)
+            💰 <strong>ต้นทุนต่อคลิป ≈ ฿19</strong> (Grok ภาพ ~$0.02 + วิดีโอ 30วิ ~$0.50 + Claude ~$0.01 + เสียงในตัว ✅)
           </div>
 
           <button class="btn btn-gold btn-full" onclick="startCreate()" id="create-btn">✨ เริ่มสร้างวิดีโอ 30 วินาที</button>
@@ -376,7 +376,7 @@ select option{background:var(--bg3)}
             </div>
             <div class="pipe" id="p-extend">
               <div class="pipe-icon">⏩</div>
-              <div style="flex:1"><div class="pipe-name">kie.ai — สร้างฉาก 2-5</div><div class="pipe-sub" id="ps-extend">สร้างคลิปแยกทีละฉากเพื่อให้เสถียรกว่า</div></div>
+              <div style="flex:1"><div class="pipe-name">kie.ai — Extend ฉาก 2-5</div><div class="pipe-sub" id="ps-extend">ต่อวิดีโอจากเฟรมสุดท้าย ×4 = 30 วินาที</div></div>
               <span class="pipe-badge pb-wait" id="pb-extend">รอ</span>
             </div>
           </div>
@@ -419,7 +419,7 @@ select option{background:var(--bg3)}
               </div>
             </div>
 
-            <button class="btn btn-green btn-full" onclick="goPost()">📤 ไปตั้งเวลาโพสต์ →</button>
+            <button class="btn btn-green btn-full" onclick="goPost()" style="font-size:15px;padding:14px">✅ พอใจแล้ว → ไปโพสต์ / ตั้งเวลา</button>
           </div>
 
           <!-- Error -->
@@ -552,8 +552,11 @@ select option{background:var(--bg3)}
         </div>
 
         <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn btn-full" onclick="saveAllKeys()">💾 บันทึกทุก Key</button>
-          <button class="btn btn-sm" onclick="testAllKeys()" style="white-space:nowrap">🧪 ทดสอบ</button>
+          <button class="btn" onclick="saveAllKeys()" style="flex:1;justify-content:center">💾 บันทึกทุก Key</button>
+          <button class="btn btn-gold" onclick="testAllKeys()" style="white-space:nowrap;font-size:14px">🧪 ทดสอบ Keys</button>
+        </div>
+        <div class="alert alert-blue" style="margin-top:12px;font-size:13px">
+          ⚠️ <strong>สำคัญ</strong> — กด <strong>🧪 ทดสอบ Keys</strong> ทุกครั้งก่อนสร้างวิดีโอ ให้ขึ้น ✅ ทุกตัวก่อนครับ
         </div>
         <div id="key-test-result" style="margin-top:10px;display:none"></div>
       </div>
@@ -697,29 +700,31 @@ async function kieImage(prompt) {
 
   // Poll จนเสร็จ
   const start = Date.now();
-  while (Date.now() - start < 120000) {
-    await new Promise(r => setTimeout(r, 4000));
+  while (Date.now() - start < 180000) {
+    await new Promise(r => setTimeout(r, 5000));
     const task = await kieGetTask(taskId);
-    const state = task?.state || task?.status || task?.taskStatus || '';
-    if (['success','completed','finished','succeed'].includes(state)) {
-      let url = null;
-      if (task?.resultJson) {
-        try {
-          const r = JSON.parse(task.resultJson);
-          url = r?.resultUrls?.[0] || r?.imageUrl || r?.urls?.[0];
-        } catch(e) {}
-      }
-      url = url || task?.imageUrl || task?.output?.imageUrl
+    if (!task) continue;
+    const status = (task.status || task.taskStatus || task.state || '').toLowerCase();
+    const successStates = ['completed','success','finished','succeed','done','succeeded'];
+    const failStates = ['failed','error','fail','cancelled'];
+
+    if (successStates.some(s => status.includes(s))) {
+      const url = task.imageUrl || task.image_url
+        || task?.output?.imageUrl || task?.output?.image_url
         || task?.images?.[0]?.url || task?.result?.imageUrl
-        || task?.urls?.[0] || task?.url;
+        || task?.urls?.[0] || task?.url || task?.mediaUrl;
       if (url) return url;
-      throw new Error('kie.ai Image เสร็จแล้วแต่ไม่มี image URL');
+      // ค้นหา image URL จาก JSON
+      const raw = JSON.stringify(task);
+      const match = raw.match(/"(https?:\/\/[^"]+\.(png|jpg|jpeg|webp)[^"]*)"/i);
+      if (match) return match[1];
+      throw new Error('kie.ai Image สำเร็จแต่หา URL ไม่เจอ: ' + raw.substring(0,200));
     }
-    if (['fail','failed','error'].includes(state)) {
-      throw new Error('kie.ai Image failed: ' + (task?.failMsg || task?.failReason || 'unknown'));
+    if (failStates.some(s => status.includes(s))) {
+      throw new Error('kie.ai Image failed: ' + (task.failReason || task.message || status));
     }
   }
-  throw new Error('kie.ai Image timeout');
+  throw new Error('kie.ai Image timeout (3 นาที)');
 }
 
 // ─── kie.ai API ───────────────────────────────────────────────────────────────
@@ -741,55 +746,62 @@ async function kieCreateTask(model, input) {
   return data.data.taskId;
 }
 
-async function kieCreateTaskWithRetry(model, input, retry = 3) {
-  for (let i = 0; i < retry; i++) {
-    try {
-      return await kieCreateTask(model, input);
-    } catch (e) {
-      if (i === retry - 1) throw e;
-      console.log('🔁 Retry createTask...', i + 1);
-      await new Promise(r => setTimeout(r, 3000));
-    }
-  }
-}
-
-
 async function kieGetTask(taskId) {
   const key = getKey('kie');
-  // endpoint ใหม่ตาม kie.ai docs 2025
-  const res = await fetch('https://api.kie.ai/api/v1/jobs/recordInfo?taskId=' + taskId, {
+  const res = await fetch('https://api.kie.ai/api/v1/jobs/task?taskId=' + taskId, {
     headers: { 'Authorization':'Bearer ' + key }
   });
-  if (!res.ok) throw new Error('kie.ai get task failed: ' + res.status);
+  if (!res.ok) throw new Error('kie.ai get task ' + res.status);
   const data = await res.json();
-  return data.data;
+  // kie.ai อาจส่ง data ใน data.data หรือ data โดยตรง
+  return data.data || data;
 }
 
-async function kiePollUntilDone(taskId, timeoutMs = 300000) {
+async function kiePollUntilDone(taskId, timeoutMs = 360000) {
   const start = Date.now();
+  let attempts = 0;
   while (Date.now() - start < timeoutMs) {
-    await new Promise(r => setTimeout(r, 5000));
-    const task = await kieGetTask(taskId);
-    // state field ใหม่ตาม API docs ล่าสุด
-    const state = task?.state || task?.status || task?.taskStatus || '';
-    if (state === 'success' || state === 'completed' || state === 'finished' || state === 'succeed') {
-      // parse resultJson ก่อน แล้วค่อย fallback ไป field เดิม
-      let url = null;
-      if (task?.resultJson) {
-        try {
-          const r = JSON.parse(task.resultJson);
-          url = r?.resultUrls?.[0] || r?.videoUrl || r?.urls?.[0];
-        } catch(e) {}
+    await new Promise(r => setTimeout(r, 6000));
+    attempts++;
+    try {
+      const task = await kieGetTask(taskId);
+      if (!task) continue;
+
+      // ตรวจสอบ status หลายรูปแบบที่ kie.ai ใช้
+      const status = (task.status || task.taskStatus || task.state || '').toLowerCase();
+      const successStates = ['completed','success','finished','succeed','done','succeeded'];
+      const failStates = ['failed','error','fail','cancelled'];
+
+      if (successStates.some(s => status.includes(s))) {
+        // หา video URL จากหลาย field ที่เป็นไปได้
+        const url = task.videoUrl || task.video_url
+          || task?.output?.videoUrl || task?.output?.video_url
+          || task?.result?.videoUrl || task?.result?.url
+          || task?.videos?.[0]?.url || task?.data?.videoUrl
+          || task?.url || task?.mediaUrl;
+        if (url) return url;
+        // บางครั้ง URL อยู่ใน nested object
+        const raw = JSON.stringify(task);
+        const match = raw.match(/"(https?:\/\/[^"]+\.mp4[^"]*)"/);
+        if (match) return match[1];
+        throw new Error('kie.ai สำเร็จแต่หา video URL ไม่เจอ: ' + raw.substring(0,300));
       }
-      url = url || task?.videoUrl || task?.output?.videoUrl || task?.result?.videoUrl || task?.videos?.[0]?.url || task?.url;
-      if (url) return url;
-      throw new Error('kie.ai เสร็จแล้วแต่ไม่มี video URL');
-    }
-    if (state === 'fail' || state === 'failed' || state === 'error') {
-      throw new Error('kie.ai task failed: ' + (task?.failMsg || task?.failReason || 'unknown'));
+
+      if (failStates.some(s => status.includes(s))) {
+        throw new Error('kie.ai failed: ' + (task.failReason || task.message || status));
+      }
+
+      // ยังรอ - แสดง progress
+      if (attempts % 5 === 0) {
+        console.log('Polling attempt ' + attempts + ', status: ' + status);
+      }
+    } catch(e) {
+      if (e.message.includes('failed') || e.message.includes('สำเร็จแต่')) throw e;
+      // Network error - ลองใหม่
+      console.warn('Poll error, retrying:', e.message);
     }
   }
-  throw new Error('kie.ai timeout — ใช้เวลานานเกิน 5 นาที');
+  throw new Error('kie.ai timeout — ใช้เวลานานเกิน 6 นาที (taskId: ' + taskId + ')');
 }
 
 // ─── Pipeline ─────────────────────────────────────────────────────────────────
@@ -846,8 +858,9 @@ function setSceneStatus(i, state) {
 
 // ─── Start Create ─────────────────────────────────────────────────────────────
 async function startCreate() {
-  if (!getKey('claude')) { toast('❌ ต้องการ Claude API Key'); nav('settings',null); return; }
-  if (!getKey('kie')) { toast('❌ ต้องการ kie.ai API Key'); nav('settings',null); return; }
+  // ตรวจสอบ Keys ครบก่อนเริ่ม
+  if (!getKey('claude')) { toast('❌ ต้องการ Claude API Key — ไปใส่ที่ Settings แล้วกด ทดสอบ ก่อน'); nav('settings',null); return; }
+  if (!getKey('kie')) { toast('❌ ต้องการ kie.ai API Key — ไปใส่ที่ Settings แล้วกด ทดสอบ ก่อน'); nav('settings',null); return; }
 
   const keyword = document.getElementById('f-keyword').value.trim();
   if (!keyword) { toast('กรุณาใส่หัวข้อก่อนครับ'); return; }
@@ -913,12 +926,13 @@ async function startCreate() {
     setPipe('image','done');
     setProgress(35,'ภาพ Reference พร้อม! กำลังสร้างวิดีโอฉาก 1...');
 
-    // ── STEP 3: kie.ai Image-to-Video (ฉาก 1) ──
+    // ── STEP 3: Grok Image-to-Video ฉาก 1 ──
     setPipe('video1','run');
     setSceneStatus(0,'run');
-    document.getElementById('ps-video1').textContent = 'กำลังสร้างวิดีโอฉาก 1 จากภาพ Reference...';
+    document.getElementById('ps-video1').textContent = 'Grok Video กำลังสร้างวิดีโอฉาก 1 (6 วิ)...';
+    console.log('Creating video clip 1 from image:', refImageUrl?.substring(0,80));
 
-    const taskId1 = await kieCreateTaskWithRetry('grok-imagine/image-to-video', {
+    const taskId1 = await kieCreateTask('grok-imagine/image-to-video', {
       image_urls: [refImageUrl],
       prompt: script.scenes[0].video_prompt,
       mode: 'normal',
@@ -931,43 +945,38 @@ async function startCreate() {
     job.video_clips = [videoUrl1];
     setSceneStatus(0,'done');
     setPipe('video1','done');
-    setProgress(50,'ฉาก 1 เสร็จ! กำลังสร้างฉาก 2-5...');
+    setProgress(50,'ฉาก 1 เสร็จ! กำลัง Extend ฉาก 2-5...');
 
-    // ── STEP 4: สร้างวิดีโอฉาก 2-5 แยกทีละคลิป ──
+    // ── STEP 4: Grok Video Extend ฉาก 2-5 ──
     setPipe('extend','run');
+    let lastTaskId = taskId1;
+    console.log('Starting extend loop, base taskId:', taskId1);
 
     for (let i = 1; i < script.scenes.length; i++) {
       setSceneStatus(i,'run');
-      document.getElementById('ps-extend').textContent = 'กำลังสร้างวิดีโอฉาก ' + (i+1) + '/5...';
-      setProgress(50 + i * 10, 'สร้างฉาก ' + (i+1) + '...');
+      document.getElementById('ps-extend').textContent = 'Grok กำลัง Extend ฉาก ' + (i+1) + '/5...';
+      setProgress(50 + i * 10, 'Extend ฉาก ' + (i+1) + '/5 (' + (i*6) + '-' + ((i+1)*6) + ' วิ)...');
+      console.log('Extending scene', i+1, 'from taskId:', lastTaskId);
 
-      try {
-        const sceneTaskId = await kieCreateTaskWithRetry('grok-imagine/image-to-video', {
-          image_urls: [refImageUrl],
-          prompt: script.scenes[i].video_prompt,
-          mode: 'normal',
-          duration: '6',
-          resolution: '480p',
-          aspect_ratio: '9:16'
-        });
+      const extTaskId = await kieCreateTask('grok-imagine/extend', {
+        task_id: lastTaskId,
+        prompt: script.scenes[i].video_prompt,
+        extend_at: 0,
+        extend_times: '1'
+      });
 
-        const sceneVideoUrl = await kiePollUntilDone(sceneTaskId);
-        job.video_clips.push(sceneVideoUrl);
-        setSceneStatus(i,'done');
-        saveJobs();
-      } catch (e) {
-        console.log('❌ Scene generation fail:', i + 1, e);
-        setSceneStatus(i,'err');
-        continue;
-      }
+      const extVideoUrl = await kiePollUntilDone(extTaskId);
+      job.video_clips.push(extVideoUrl);
+      lastTaskId = extTaskId;
+      setSceneStatus(i,'done');
     }
 
-    // ตอนนี้ preview แสดงคลิปแรกก่อน ส่วนคลิปทั้งหมดดูได้ในงานที่บันทึกไว้
-    const finalVideoUrl = job.video_clips[0];
+    // ใช้ video URL สุดท้ายที่ extend แล้ว (มี 30 วิ)
+    const finalVideoUrl = job.video_clips[job.video_clips.length - 1];
     job.video_url = finalVideoUrl;
     job.status = 'ready';
     setPipe('extend','done');
-    setProgress(100,'✅ สร้างคลิปครบทุกฉากแล้ว!');
+    setProgress(100,'✅ วิดีโอ 30 วินาที พร้อมเสียง! ดู Preview ก่อนโพสต์ครับ');
     saveJobs();
 
     // ── แสดง Video Preview ──
