@@ -6,7 +6,1256 @@
 <title>Kong AI · Video Studio v7.1 Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Kanit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+:root {<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kong AI · Video Studio v6</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Kanit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
 :root {
+  --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--sur:#16161f;--bdr:#2a2a38;--bdr2:#3a3a50;
+  --text:#e8e8f0;--text2:#9090b0;--text3:#50506a;
+  --gold:#f0c060;--gold2:#ffd878;--goldd:#c09030;
+  --green:#40c878;--red:#f06060;--blue:#6090f8;--teal:#40c8b0;--purple:#9060f0;
+  --r:14px;--rsm:8px;
+  --font:'Sarabun',sans-serif;--fontd:'Kanit',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;overflow-x:hidden}
+body::before{content:'';position:fixed;top:-40%;left:-20%;width:80vw;height:80vh;background:radial-gradient(ellipse,rgba(96,144,248,.05) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh;position:relative;z-index:1}
+
+/* Sidebar */
+.sidebar{background:linear-gradient(180deg,#0e0e16,#0a0a12);border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sbrand{padding:24px 18px 18px;border-bottom:1px solid var(--bdr)}
+.savatar{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--fontd);font-size:20px;color:#0a0a0f;font-weight:700;margin-bottom:12px;box-shadow:0 4px 16px rgba(240,192,96,.25)}
+.sbrand-name{font-family:var(--fontd);font-size:16px;color:var(--text);font-weight:600}
+.sbrand-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.snav{padding:14px 10px;flex:1}
+.nsec{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;padding:10px 8px 5px;font-weight:600}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:var(--rsm);cursor:pointer;font-size:13px;color:var(--text2);transition:all .2s;margin-bottom:2px;user-select:none}
+.ni:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.ni.active{background:rgba(240,192,96,.1);color:var(--gold);border-left:2px solid var(--gold)}
+.ni-icon{font-size:15px;width:20px;text-align:center}
+.nbadge{margin-left:auto;font-size:10px;background:rgba(240,192,96,.15);color:var(--gold);border-radius:99px;padding:1px 7px;font-weight:600}
+.sfoot{padding:14px;border-top:1px solid var(--bdr)}
+.api-dot-row{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:11px;color:var(--text3)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;transition:background .4s}
+.dot.ok{background:var(--green);box-shadow:0 0 6px rgba(64,200,120,.5)}
+
+/* Main */
+.main{display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:rgba(10,10,15,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:var(--fontd);font-size:18px;font-weight:600;color:var(--text)}
+.topbar-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.content{flex:1;padding:24px 28px;display:flex;flex-direction:column;gap:20px}
+.content-section{display:none}.content-section.active{display:flex;flex-direction:column;gap:20px}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:22px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.card-title{font-family:var(--fontd);font-size:14px;font-weight:600;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:var(--text)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:18px;transition:border-color .2s,transform .2s}
+.stat:hover{border-color:var(--bdr2);transform:translateY(-1px)}
+.stat-icon{font-size:22px;margin-bottom:8px}
+.stat-n{font-family:var(--fontd);font-size:28px;font-weight:700;margin-bottom:4px}
+.stat-l{font-size:11px;color:var(--text3)}
+.stat.gold .stat-n{color:var(--gold)}.stat.green .stat-n{color:var(--green)}
+.stat.blue .stat-n{color:var(--blue)}.stat.purple .stat-n{color:var(--purple)}
+
+/* Forms */
+.fgroup{margin-bottom:14px}
+label.lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:6px;font-weight:600}
+input,select,textarea{width:100%;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--rsm);padding:10px 13px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{border-color:rgba(240,192,96,.5);box-shadow:0 0 0 3px rgba(240,192,96,.08)}
+input::placeholder{color:var(--text3)}
+textarea{resize:vertical;min-height:80px;line-height:1.7}
+select option{background:var(--bg3)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* Buttons */
+.btn{padding:9px 18px;border-radius:var(--rsm);border:1px solid var(--bdr2);background:var(--bg3);color:var(--text2);font-size:13px;font-family:var(--font);cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.btn:hover{background:var(--bdr);color:var(--text)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0a0f;border-color:var(--gold);font-weight:700;font-family:var(--fontd);font-size:14px;box-shadow:0 4px 16px rgba(240,192,96,.2)}
+.btn-gold:hover:not(:disabled){background:linear-gradient(135deg,var(--gold2),#ffe090);box-shadow:0 6px 20px rgba(240,192,96,.35);transform:translateY(-1px)}
+.btn-green{background:rgba(64,200,120,.12);color:var(--green);border-color:rgba(64,200,120,.3)}
+.btn-green:hover:not(:disabled){background:rgba(64,200,120,.2)}
+.btn-red{background:rgba(240,96,96,.1);color:var(--red);border-color:rgba(240,96,96,.25)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-full{width:100%;justify-content:center}
+
+/* Pipeline */
+.pipeline{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.pipe{display:flex;align-items:center;gap:12px;padding:13px 16px;border:1px solid var(--bdr);border-radius:var(--rsm);background:var(--sur);transition:all .3s}
+.pipe.active{border-color:rgba(240,192,96,.4);background:rgba(240,192,96,.06)}
+.pipe.done{border-color:rgba(64,200,120,.3);background:rgba(64,200,120,.05)}
+.pipe.error{border-color:rgba(240,96,96,.3);background:rgba(240,96,96,.05)}
+.pipe-icon{font-size:20px;width:30px;text-align:center;flex-shrink:0}
+.pipe-name{font-size:13px;font-weight:600;font-family:var(--fontd);color:var(--text)}
+.pipe-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.pipe-badge{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap}
+.pb-wait{background:var(--bg3);color:var(--text3)}
+.pb-run{background:rgba(240,192,96,.15);color:var(--gold);border:1px solid rgba(240,192,96,.3)}
+.pb-done{background:rgba(64,200,120,.12);color:var(--green);border:1px solid rgba(64,200,120,.25)}
+.pb-skip{background:var(--bg3);color:var(--text3)}
+
+/* Progress */
+.prog-wrap{margin:12px 0}
+.prog-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px;color:var(--text2)}
+.prog-bar{height:4px;background:var(--bg3);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--purple));border-radius:99px;transition:width .6s ease}
+
+/* Video Preview — สำคัญมาก */
+.video-preview-wrap{
+  background:var(--sur);border:1px solid rgba(64,200,120,.25);
+  border-radius:var(--r);overflow:hidden;margin-bottom:16px;
+}
+.video-player-box{
+  position:relative;background:#000;
+  aspect-ratio:9/16;max-height:400px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.video-player-box video{
+  width:100%;height:100%;object-fit:contain;
+}
+.video-player-box .play-overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.4);cursor:pointer;
+  transition:opacity .2s;
+}
+.video-player-box .play-overlay:hover{background:rgba(0,0,0,.2)}
+.play-btn-big{
+  width:64px;height:64px;border-radius:50%;
+  background:rgba(240,192,96,.9);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;color:#0a0a0f;
+  box-shadow:0 8px 24px rgba(240,192,96,.4);
+  transition:transform .2s;
+}
+.play-overlay:hover .play-btn-big{transform:scale(1.1)}
+.video-info-bar{
+  padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;border-top:1px solid var(--bdr);
+}
+.video-duration{font-size:12px;color:var(--text3)}
+.video-url-mini{
+  font-size:10px;font-family:monospace;color:var(--teal);
+  background:var(--bg3);padding:4px 10px;border-radius:var(--rsm);
+  max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* Scene cards */
+.scenes-preview{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.scene-card{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 14px;background:var(--sur);
+  border:1px solid var(--bdr);border-radius:var(--rsm);
+  transition:border-color .2s;
+}
+.scene-card.active{border-color:rgba(240,192,96,.4);background:rgba(240,192,96,.05)}
+.scene-card.done{border-color:rgba(64,200,120,.3)}
+.scene-num{
+  font-family:var(--fontd);font-size:10px;font-weight:700;
+  color:var(--text3);background:var(--bg3);
+  padding:3px 8px;border-radius:var(--rsm);white-space:nowrap;flex-shrink:0;
+}
+.scene-text{font-size:12px;color:var(--text2);line-height:1.6;flex:1}
+.scene-status{font-size:10px;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0}
+.ss-wait{background:var(--bg3);color:var(--text3)}
+.ss-run{background:rgba(240,192,96,.15);color:var(--gold)}
+.ss-done{background:rgba(64,200,120,.12);color:var(--green)}
+.ss-err{background:rgba(240,96,96,.1);color:var(--red)}
+
+/* Caption chooser */
+.cap-opts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.cap-opt{padding:13px 15px;border:1.5px solid var(--bdr);border-radius:var(--rsm);cursor:pointer;font-size:13px;line-height:1.7;color:var(--text2);transition:all .2s;background:var(--sur)}
+.cap-opt:hover{border-color:var(--bdr2);color:var(--text)}
+.cap-opt.selected{border-color:rgba(240,192,96,.5);background:rgba(240,192,96,.07);color:var(--text)}
+.cap-num{font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+
+/* Platform tags */
+.pcheck{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--sur);border:1.5px solid var(--bdr);border-radius:var(--rsm);cursor:pointer;transition:all .2s;user-select:none}
+.pcheck.sel{background:rgba(96,144,248,.08);border-color:rgba(96,144,248,.35)}
+.pcheck-name{font-size:13px;font-weight:500;color:var(--text)}
+.pcheck-plat{font-size:10px;color:var(--text3);margin-top:1px}
+.pages-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+
+/* Badges & Alerts */
+.badge{font-size:11px;padding:2px 9px;border-radius:99px;font-weight:500}
+.badge-gold{background:rgba(240,192,96,.15);color:var(--gold)}
+.badge-green{background:rgba(64,200,120,.12);color:var(--green)}
+.badge-red{background:rgba(240,96,96,.1);color:var(--red)}
+.badge-blue{background:rgba(96,144,248,.12);color:var(--blue)}
+.alert{border-radius:var(--rsm);padding:11px 14px;font-size:13px;line-height:1.65;margin-bottom:12px}
+.alert-gold{background:rgba(240,192,96,.08);border:1px solid rgba(240,192,96,.2);color:#c8a040}
+.alert-green{background:rgba(64,200,120,.08);border:1px solid rgba(64,200,120,.2);color:var(--green)}
+.alert-red{background:rgba(240,96,96,.08);border:1px solid rgba(240,96,96,.2);color:var(--red)}
+.alert-blue{background:rgba(96,144,248,.08);border:1px solid rgba(96,144,248,.2);color:var(--blue)}
+
+/* Key groups */
+.key-group{padding:16px 0;border-bottom:1px solid var(--bdr)}
+.key-group:last-child{border-bottom:none}
+.key-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.key-info{display:flex;align-items:center;gap:10px}
+.key-title{font-size:14px;font-weight:600;font-family:var(--fontd);color:var(--text)}
+.key-desc{font-size:11px;color:var(--text3);margin-top:2px}
+.key-row{display:flex;gap:8px}
+.key-row input{font-family:monospace;font-size:12px}
+
+/* Job items */
+.job-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rsm);margin-bottom:8px;cursor:pointer;transition:all .2s}
+.job-item:hover{border-color:var(--bdr2);background:var(--bg3)}
+.job-status{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap}
+.js-pending,.js-running{background:rgba(240,192,96,.12);color:var(--gold)}
+.js-ready{background:rgba(64,200,120,.12);color:var(--green);border:1px solid rgba(64,200,120,.2)}
+.js-error{background:rgba(240,96,96,.1);color:var(--red)}
+.js-posted{background:rgba(96,144,248,.12);color:var(--blue)}
+
+/* Sch toggle */
+.sch-toggle{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;cursor:pointer;color:var(--text2)}
+.sch-toggle input{width:16px;height:16px;accent-color:var(--gold);cursor:pointer}
+
+/* Error box */
+.error-detail{background:rgba(0,0,0,.3);border:1px solid rgba(240,96,96,.2);border-radius:var(--rsm);padding:12px;font-size:11px;font-family:monospace;color:#f08080;line-height:1.7;white-space:pre-wrap;word-break:break-all;max-height:160px;overflow-y:auto;margin-top:8px}
+
+/* Post result */
+.post-result-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rsm);margin-bottom:6px}
+
+/* Empty */
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);padding:11px 22px;border-radius:99px;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Animations */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite;display:inline-block}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:99px}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sbrand">
+    <div class="savatar">ก้</div>
+    <div class="sbrand-name">Kong AI Studio</div>
+    <div class="sbrand-sub">Claude · kie.ai · PostForMe · v7.0</div>
+  </div>
+  <nav class="snav">
+    <div class="nsec">หลัก</div>
+    <div class="ni active" onclick="nav('dashboard',this)"><span class="ni-icon">⚡</span>Dashboard</div>
+    <div class="ni" onclick="nav('create',this)"><span class="ni-icon">🎬</span>สร้างวิดีโอ</div>
+    <div class="ni" onclick="nav('jobs',this)"><span class="ni-icon">📋</span>งานทั้งหมด<span class="nbadge" id="badge-jobs">0</span></div>
+    <div class="ni" onclick="nav('post',this)"><span class="ni-icon">📤</span>โพสต์ & ตั้งเวลา</div>
+    <div class="nsec">จัดการ</div>
+    <div class="ni" onclick="nav('pages',this)"><span class="ni-icon">📱</span>จัดการ Accounts</div>
+    <div class="ni" onclick="nav('settings',this)"><span class="ni-icon">⚙️</span>ตั้งค่า API</div>
+  </nav>
+  <div class="sfoot">
+    <div class="api-dot-row"><div class="dot" id="dot-claude"></div>Claude AI</div>
+    <div class="api-dot-row"><div class="dot" id="dot-kie"></div>kie.ai (ภาพ + วิดีโอ)</div>
+    <div class="api-dot-row"><div class="dot" id="dot-pfm"></div>PostForMe</div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-sub">Kong AI Video Studio · พี่ก้อง</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="refreshDots()">🔄 เช็ค API</button>
+      <button class="btn btn-gold" onclick="nav('create',null)">+ สร้างวิดีโอใหม่</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="content-section active" id="sec-dashboard">
+      <div class="stats">
+        <div class="stat gold"><div class="stat-icon">🎬</div><div class="stat-n" id="s-total">0</div><div class="stat-l">งานทั้งหมด</div></div>
+        <div class="stat green"><div class="stat-icon">✅</div><div class="stat-n" id="s-ready">0</div><div class="stat-l">วิดีโอพร้อม</div></div>
+        <div class="stat blue"><div class="stat-icon">📤</div><div class="stat-n" id="s-posted">0</div><div class="stat-l">โพสต์แล้ว</div></div>
+        <div class="stat purple"><div class="stat-icon">📱</div><div class="stat-n" id="s-accounts">0</div><div class="stat-l">Accounts</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎬 งานล่าสุด</div>
+        <div id="dash-recent"><div class="empty"><div class="empty-icon">🎬</div><div>ยังไม่มีงาน</div></div></div>
+      </div>
+      <div class="alert alert-blue">
+        💡 <strong>Flow v7:</strong> Claude เขียน Script → kie.ai สร้างภาพ Reference → kie.ai สร้างวิดีโอทีละฉาก → <strong>Preview ก่อนโพสต์</strong> → PostForMe โพสต์ FB + TikTok + YouTube
+      </div>
+    </div>
+
+    <!-- CREATE -->
+    <div class="content-section" id="sec-create">
+      <div class="card">
+        <div class="card-title">✨ สร้างวิดีโอ AI ใหม่</div>
+
+        <div id="create-form">
+          <div class="fgroup">
+            <label class="lbl">หัวข้อ / Keyword</label>
+            <input id="f-keyword" type="text" placeholder="เช่น ทหารหญิงไทยสาวสวยเดินที่ค่ายทหาร, 5 วิธีเก็บเงินให้ได้แสนใน 1 ปี...">
+          </div>
+          <div class="row3">
+            <div class="fgroup">
+              <label class="lbl">ประเภท</label>
+              <select id="f-type">
+                <option value="story">📖 เรื่องเล่า</option>
+                <option value="tips">💡 เคล็ดลับ</option>
+                <option value="food">🍳 สูตรอาหาร</option>
+                <option value="money">💰 การเงิน</option>
+                <option value="motivation">💪 แรงบันดาลใจ</option>
+                <option value="health">🏥 สุขภาพ</option>
+              </select>
+            </div>
+            <div class="fgroup">
+              <label class="lbl">สไตล์</label>
+              <select id="f-style">
+                <option value="storytelling">📖 Storytelling</option>
+                <option value="documentary">🎥 สารคดี</option>
+                <option value="tutorial">📝 Tutorial</option>
+                <option value="motivation">🔥 แรงบันดาลใจ</option>
+              </select>
+            </div>
+            <div class="fgroup">
+              <label class="lbl">ภาษา Caption</label>
+              <select id="f-lang">
+                <option value="th">🇹🇭 ภาษาไทย</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="both">🌏 ไทย + English</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="alert alert-gold" style="margin-bottom:16px">
+            🎬 <strong>30 วินาที</strong> — Claude เขียน Script 5 ฉาก → kie.ai สร้างภาพ Reference → kie.ai สร้างวิดีโอฉากละ 6 วิ รวม 5 ฉาก
+          </div>
+
+          <div class="alert alert-blue" style="margin-bottom:16px">
+            💰 <strong>ต้นทุนต่อคลิป ≈ ฿20</strong> (kie.ai ภาพ ~$0.02 + วิดีโอ ~$0.50 + Claude ~$0.01)
+          </div>
+
+          <button class="btn btn-gold btn-full" onclick="startCreate()" id="create-btn">✨ เริ่มสร้างวิดีโอ 30 วินาที</button>
+        </div>
+
+        <!-- Pipeline -->
+        <div id="create-pipeline" style="display:none">
+          <div class="prog-wrap">
+            <div class="prog-row"><span id="pipe-label" style="color:var(--gold)">เริ่มต้น...</span><span id="pipe-pct">0%</span></div>
+            <div class="prog-bar"><div class="prog-fill" id="pipe-bar" style="width:0%"></div></div>
+          </div>
+
+          <div class="pipeline">
+            <div class="pipe" id="p-script">
+              <div class="pipe-icon">🤖</div>
+              <div style="flex:1"><div class="pipe-name">Claude — เขียน Script 5 ฉาก</div><div class="pipe-sub">Script ภาษาไทย + Video Prompt ภาษาอังกฤษ + Caption 3 แบบ</div></div>
+              <span class="pipe-badge pb-wait" id="pb-script">รอ</span>
+            </div>
+            <div class="pipe" id="p-image">
+              <div class="pipe-icon">🖼️</div>
+              <div style="flex:1"><div class="pipe-name">kie.ai — สร้างภาพ Reference</div><div class="pipe-sub">Grok Imagine Text-to-Image ผ่าน kie.ai สำหรับ Image-to-Video</div></div>
+              <span class="pipe-badge pb-wait" id="pb-image">รอ</span>
+            </div>
+            <div class="pipe" id="p-video1">
+              <div class="pipe-icon">🎬</div>
+              <div style="flex:1"><div class="pipe-name">kie.ai — สร้างวิดีโอฉาก 1</div><div class="pipe-sub" id="ps-video1">Image-to-Video 6 วินาที พร้อมเสียง</div></div>
+              <span class="pipe-badge pb-wait" id="pb-video1">รอ</span>
+            </div>
+            <div class="pipe" id="p-extend">
+              <div class="pipe-icon">⏩</div>
+              <div style="flex:1"><div class="pipe-name">kie.ai — สร้างฉาก 2-5</div><div class="pipe-sub" id="ps-extend">สร้างคลิปแยกทีละฉากเพื่อให้เสถียรกว่า</div></div>
+              <span class="pipe-badge pb-wait" id="pb-extend">รอ</span>
+            </div>
+          </div>
+
+          <!-- Scenes progress -->
+          <div class="scenes-preview" id="scenes-preview"></div>
+
+          <!-- Video Preview Result -->
+          <div id="pipe-result" style="display:none">
+            <div class="alert alert-green">🎉 วิดีโอ 30 วินาที พร้อมแล้ว! ดูก่อนโพสต์ได้เลยครับ</div>
+
+            <!-- Video Player -->
+            <div class="video-preview-wrap">
+              <div class="video-player-box" id="video-player-box">
+                <video id="result-video" preload="metadata" playsinline style="display:none"></video>
+                <div class="play-overlay" id="play-overlay" onclick="togglePlay()">
+                  <div class="play-btn-big" id="play-btn-icon">▶</div>
+                </div>
+              </div>
+              <div class="video-info-bar">
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--green)">✅ วิดีโอพร้อม</div>
+                  <div class="video-duration" id="video-duration">30 วินาที · 720p · พร้อมเสียง</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <div class="video-url-mini" id="video-url-mini">—</div>
+                  <button class="btn btn-sm" onclick="copyVideoUrl()">📋</button>
+                  <a id="result-link" href="#" target="_blank" class="btn btn-sm">🔗</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Captions -->
+            <div style="margin-bottom:16px">
+              <label class="lbl">เลือก Caption ที่ดีที่สุด</label>
+              <div class="cap-opts" id="cap-opts"></div>
+              <div class="fgroup" style="margin-top:10px">
+                <label class="lbl">แก้ไข Caption</label>
+                <textarea id="cap-edit" rows="4"></textarea>
+              </div>
+            </div>
+
+            <button class="btn btn-green btn-full" onclick="goPost()">📤 ไปตั้งเวลาโพสต์ →</button>
+          </div>
+
+          <!-- Error -->
+          <div id="pipe-error" style="display:none">
+            <div class="alert alert-red" id="pipe-error-msg">เกิดข้อผิดพลาด</div>
+            <div id="error-detail-wrap" style="display:none"><div class="error-detail" id="error-detail-box"></div></div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn btn-full" onclick="resetCreate()">← ลองใหม่</button>
+              <button class="btn btn-sm" onclick="nav('settings',null)" style="white-space:nowrap">⚙️ ตรวจ Key</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOBS -->
+    <div class="content-section" id="sec-jobs">
+      <div class="card">
+        <div class="card-title">📋 งานทั้งหมด</div>
+        <div id="jobs-list"></div>
+      </div>
+    </div>
+
+    <!-- POST -->
+    <div class="content-section" id="sec-post">
+      <div class="card">
+        <div class="card-title">📤 โพสต์ไปหลายแพลตฟอร์ม</div>
+
+        <div class="fgroup">
+          <label class="lbl">เลือกวิดีโอ (Job)</label>
+          <select id="post-job"><option value="">— เลือก Job —</option></select>
+        </div>
+
+        <!-- Video Preview in Post section -->
+        <div id="post-video-preview" style="display:none">
+          <div class="video-preview-wrap" style="margin-bottom:16px">
+            <div class="video-player-box" style="max-height:280px">
+              <video id="post-video-player" preload="metadata" playsinline controls style="width:100%;height:100%;object-fit:contain"></video>
+            </div>
+            <div class="video-info-bar">
+              <div class="video-url-mini" id="post-url-preview">—</div>
+              <a id="post-video-link" href="#" target="_blank" class="btn btn-sm">🔗 เปิดดู</a>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label class="lbl">Caption</label>
+            <textarea id="post-caption" rows="5"></textarea>
+          </div>
+        </div>
+
+        <div class="fgroup">
+          <label class="lbl">เลือก Accounts</label>
+          <div class="pages-grid" id="post-accounts-grid">
+            <div style="color:var(--text3);font-size:13px;padding:10px 0">ยังไม่มี Account</div>
+          </div>
+        </div>
+
+        <label class="sch-toggle">
+          <input type="checkbox" id="use-schedule" onchange="toggleSchedule(this.checked)">
+          <span>ตั้งเวลาโพสต์อัตโนมัติ</span>
+        </label>
+        <div id="sch-dt" style="display:none" class="fgroup">
+          <label class="lbl">วันเวลาที่จะโพสต์</label>
+          <input type="datetime-local" id="sch-datetime">
+        </div>
+
+        <button class="btn btn-green btn-full" id="post-btn" onclick="submitPost()">📤 โพสต์ไปทุกแพลตฟอร์มที่เลือก</button>
+
+        <div id="post-results" style="display:none;margin-top:16px">
+          <div class="card-title" style="margin-bottom:10px;font-size:13px">ผลการโพสต์</div>
+          <div id="post-results-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGES -->
+    <div class="content-section" id="sec-pages">
+      <div class="card">
+        <div class="card-title">📱 จัดการ Accounts</div>
+        <div id="accounts-list"></div>
+        <div style="border-top:1px solid var(--bdr);margin:18px 0"></div>
+        <div class="card-title" style="font-size:13px;margin-bottom:14px">➕ เพิ่ม Account ใหม่</div>
+        <div class="row3">
+          <div class="fgroup"><label class="lbl">ชื่อ Account</label><input id="na-name" placeholder="เช่น Kong Food Page"></div>
+          <div class="fgroup"><label class="lbl">PostForMe Account ID</label><input id="na-pfm" placeholder="จาก PostForMe Dashboard"></div>
+          <div class="fgroup">
+            <label class="lbl">แพลตฟอร์ม</label>
+            <select id="na-platform">
+              <option value="facebook">📘 Facebook</option>
+              <option value="tiktok">🎵 TikTok</option>
+              <option value="youtube">📺 YouTube</option>
+            </select>
+          </div>
+        </div>
+        <div class="alert alert-gold" style="margin-bottom:12px">💡 หา Account ID: app.postforme.dev → Accounts → เชื่อม Facebook/TikTok/YouTube → Copy Account ID</div>
+        <button class="btn btn-gold btn-sm" onclick="addAccount()">➕ เพิ่ม Account</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="content-section" id="sec-settings">
+      <div class="card">
+        <div class="card-title">🔑 API Keys</div>
+        <div class="alert alert-gold" style="margin-bottom:16px">💡 Keys บันทึกใน browser (localStorage) ปลอดภัย ไม่ส่งไปที่อื่น</div>
+
+        <div class="key-group">
+          <div class="key-header">
+            <div class="key-info"><div style="font-size:22px">🤖</div><div><div class="key-title">Claude API Key <span class="badge badge-gold" style="font-size:10px">เขียน Script</span></div><div class="key-desc">console.anthropic.com → API Keys</div></div></div>
+            <div class="dot" id="kdot-claude"></div>
+          </div>
+          <div class="key-row"><input type="password" id="k-claude" placeholder="sk-ant-api03-..."><button class="btn btn-sm" onclick="toggleKey('claude')">👁</button><button class="btn btn-gold btn-sm" onclick="saveKey('claude')">บันทึก</button></div>
+        </div>
+
+
+
+        <div class="key-group">
+          <div class="key-header">
+            <div class="key-info"><div style="font-size:22px">🎬</div><div><div class="key-title">kie.ai API Key <span class="badge badge-blue" style="font-size:10px">ภาพ + วิดีโอ</span></div><div class="key-desc">kie.ai → API Keys (สร้างภาพ + วิดีโอ ในที่เดียว)</div></div></div>
+            <div class="dot" id="kdot-kie"></div>
+          </div>
+          <div class="key-row"><input type="password" id="k-kie" placeholder="kie-..."><button class="btn btn-sm" onclick="toggleKey('kie')">👁</button><button class="btn btn-gold btn-sm" onclick="saveKey('kie')">บันทึก</button></div>
+        </div>
+
+        <div class="key-group">
+          <div class="key-header">
+            <div class="key-info"><div style="font-size:22px">📤</div><div><div class="key-title">PostForMe API Key <span class="badge badge-green" style="font-size:10px">โพสต์</span></div><div class="key-desc">app.postforme.dev → Settings → API Keys</div></div></div>
+            <div class="dot" id="kdot-pfm"></div>
+          </div>
+          <div class="key-row"><input type="password" id="k-pfm" placeholder="pfm_..."><button class="btn btn-sm" onclick="toggleKey('pfm')">👁</button><button class="btn btn-gold btn-sm" onclick="saveKey('pfm')">บันทึก</button></div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-full" onclick="saveAllKeys()">💾 บันทึกทุก Key</button>
+          <button class="btn btn-sm" onclick="testAllKeys()" style="white-space:nowrap">🧪 ทดสอบ</button>
+        </div>
+        <div id="key-test-result" style="margin-top:10px;display:none"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">ℹ️ วิธีใช้งาน</div>
+        <div style="font-size:13px;line-height:2;color:var(--text2)">
+          <div>1. ใส่ <strong style="color:var(--gold)">Claude API Key</strong> — console.anthropic.com</div>
+          <div>2. ใส่ <strong style="color:var(--gold)">kie.ai API Key</strong> — kie.ai (สร้างภาพ + วิดีโอ ครบในที่เดียว)</div>
+          <div>3. ใส่ <strong style="color:var(--gold)">PostForMe API Key</strong> — app.postforme.dev</div>
+          <div>4. เพิ่ม Accounts ใน "จัดการ Accounts"</div>
+          <div>5. สร้างวิดีโอ → <strong style="color:var(--green)">ดู Preview ก่อน</strong> → โพสต์ 🎉</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── State ────────────────────────────────────────────────────────────────────
+let jobs = JSON.parse(localStorage.getItem('kong_jobs_v6') || '[]');
+let accounts = JSON.parse(localStorage.getItem('kong_accounts') || '[]');
+let postLog = JSON.parse(localStorage.getItem('kong_posts') || '[]');
+let currentJobId = null;
+
+// ─── Keys ─────────────────────────────────────────────────────────────────────
+const KEYS = ['claude','kie','pfm'];
+function getKey(id) { return localStorage.getItem('kong_key_' + id) || ''; }
+function saveKey(id) {
+  const el = document.getElementById('k-' + id);
+  if (!el) return;
+  const v = el.value.trim();
+  if (v) { localStorage.setItem('kong_key_' + id, v); toast('✅ บันทึก ' + id.toUpperCase() + ' Key แล้ว'); }
+  else { localStorage.removeItem('kong_key_' + id); toast('🗑 ลบ ' + id.toUpperCase() + ' Key แล้ว'); }
+  refreshDots();
+}
+function saveAllKeys() { KEYS.forEach(id => saveKey(id)); }
+function toggleKey(id) {
+  const el = document.getElementById('k-' + id);
+  if (el) el.type = el.type === 'password' ? 'text' : 'password';
+}
+function refreshDots() {
+  KEYS.forEach(id => {
+    const has = !!getKey(id);
+    ['dot-','kdot-'].forEach(pre => {
+      const d = document.getElementById(pre + id);
+      if (d) d.className = 'dot' + (has ? ' ok' : '');
+    });
+  });
+}
+function loadKeyInputs() {
+  KEYS.forEach(id => { const el = document.getElementById('k-' + id); if (el) el.value = getKey(id); });
+  refreshDots();
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+const titles = { dashboard:'Dashboard', create:'✨ สร้างวิดีโอ AI', jobs:'📋 งานทั้งหมด', post:'📤 โพสต์ & ตั้งเวลา', pages:'📱 จัดการ Accounts', settings:'⚙️ ตั้งค่า API' };
+function nav(name, el) {
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  document.getElementById('topbar-title').textContent = titles[name] || name;
+  if (el) el.classList.add('active');
+  const loaders = { dashboard:loadDashboard, jobs:renderJobs, post:loadPostView, pages:renderAccounts, settings:loadKeyInputs };
+  if (loaders[name]) loaders[name]();
+}
+
+// ─── Persist ──────────────────────────────────────────────────────────────────
+function saveJobs() { localStorage.setItem('kong_jobs_v6', JSON.stringify(jobs)); }
+function saveAccounts() { localStorage.setItem('kong_accounts', JSON.stringify(accounts)); }
+function savePosts() { localStorage.setItem('kong_posts', JSON.stringify(postLog)); }
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+function loadDashboard() {
+  document.getElementById('s-total').textContent = jobs.length;
+  document.getElementById('s-ready').textContent = jobs.filter(j => j.status === 'ready').length;
+  document.getElementById('s-posted').textContent = postLog.length;
+  document.getElementById('s-accounts').textContent = accounts.length;
+  document.getElementById('badge-jobs').textContent = jobs.length;
+  const el = document.getElementById('dash-recent');
+  const recent = [...jobs].reverse().slice(0,5);
+  if (!recent.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🎬</div><div>ยังไม่มีงาน</div></div>'; return; }
+  el.innerHTML = recent.map(jobRowHTML).join('');
+}
+function jobRowHTML(j) {
+  const icons = {food:'🍳',money:'💰',motivation:'💪',tips:'💡',story:'📖',health:'🏥'};
+  const stLabel = {pending:'รอ',running:'กำลังสร้าง',ready:'✓ พร้อม',error:'❌ ผิดพลาด'}[j.status] || j.status;
+  return `<div class="job-item" onclick="openJob('${j.id}')">
+    <div style="font-size:22px">${icons[j.type]||'🎬'}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${j.keyword}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${j.created_at?.slice(0,16).replace('T',' ')||''} · 30 วินาที</div>
+    </div>
+    <span class="job-status js-${j.status}">${stLabel}</span>
+  </div>`;
+}
+function renderJobs() {
+  const el = document.getElementById('jobs-list');
+  if (!jobs.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div>ยังไม่มีงาน</div></div>'; return; }
+  el.innerHTML = [...jobs].reverse().map(jobRowHTML).join('');
+}
+
+// ─── Claude API ───────────────────────────────────────────────────────────────
+async function claudeChat(prompt) {
+  const key = getKey('claude');
+  if (!key) throw new Error('ไม่มี Claude API Key — กรอกใน Settings ก่อนครับ');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+    body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:2500, messages:[{role:'user',content:prompt}] })
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    if (res.status === 401) throw new Error('Claude 401: API Key ไม่ถูกต้อง');
+    if (res.status === 402 || res.status === 529) throw new Error('Claude ' + res.status + ': เครดิตหมด — เติมที่ console.anthropic.com/billing');
+    throw new Error('Claude ' + res.status + ': ' + t.substring(0,200));
+  }
+  const data = await res.json();
+  const text = data.content[0].text.trim();
+  let clean = text;
+  if (clean.includes('```')) clean = clean.split('```')[1].replace(/^json/,'').trim();
+  try { return JSON.parse(clean); }
+  catch(e) { throw new Error('Claude ตอบผิดรูปแบบ JSON — ลองใหม่อีกครั้ง'); }
+}
+
+// ─── kie.ai Grok Image (Text-to-Image) ───────────────────────────────────────
+async function kieImage(prompt) {
+  const key = getKey('kie');
+  if (!key) throw new Error('ไม่มี kie.ai API Key');
+
+  // สร้าง task
+  const taskId = await kieCreateTask('grok-imagine/text-to-image', {
+    prompt: prompt,
+    aspect_ratio: '9:16',
+    quality: true,
+  });
+
+  // Poll จนเสร็จ
+  const start = Date.now();
+  while (Date.now() - start < 120000) {
+    await new Promise(r => setTimeout(r, 4000));
+    const task = await kieGetTask(taskId);
+    const state = task?.state || task?.status || task?.taskStatus || '';
+    if (['success','completed','finished','succeed'].includes(state)) {
+      let url = null;
+      if (task?.resultJson) {
+        try {
+          const r = JSON.parse(task.resultJson);
+          url = r?.resultUrls?.[0] || r?.imageUrl || r?.urls?.[0];
+        } catch(e) {}
+      }
+      url = url || task?.imageUrl || task?.output?.imageUrl
+        || task?.images?.[0]?.url || task?.result?.imageUrl
+        || task?.urls?.[0] || task?.url;
+      if (url) return url;
+      throw new Error('kie.ai Image เสร็จแล้วแต่ไม่มี image URL');
+    }
+    if (['fail','failed','error'].includes(state)) {
+      throw new Error('kie.ai Image failed: ' + (task?.failMsg || task?.failReason || 'unknown'));
+    }
+  }
+  throw new Error('kie.ai Image timeout');
+}
+
+// ─── kie.ai API ───────────────────────────────────────────────────────────────
+async function kieCreateTask(model, input) {
+  const key = getKey('kie');
+  if (!key) throw new Error('ไม่มี kie.ai API Key — กรอกใน Settings ก่อนครับ');
+  const res = await fetch('https://api.kie.ai/api/v1/jobs/createTask', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
+    body: JSON.stringify({ model, input })
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    if (res.status === 401) throw new Error('kie.ai 401: API Key ไม่ถูกต้อง');
+    throw new Error('kie.ai ' + res.status + ': ' + t.substring(0,200));
+  }
+  const data = await res.json();
+  if (data.code !== 200) throw new Error('kie.ai error: ' + data.msg);
+  return data.data.taskId;
+}
+
+async function kieCreateTaskWithRetry(model, input, retry = 3) {
+  for (let i = 0; i < retry; i++) {
+    try {
+      return await kieCreateTask(model, input);
+    } catch (e) {
+      if (i === retry - 1) throw e;
+      console.log('🔁 Retry createTask...', i + 1);
+      await new Promise(r => setTimeout(r, 3000));
+    }
+  }
+}
+
+
+async function kieGetTask(taskId) {
+  const key = getKey('kie');
+  // endpoint ใหม่ตาม kie.ai docs 2025
+  const res = await fetch('https://api.kie.ai/api/v1/jobs/recordInfo?taskId=' + taskId, {
+    headers: { 'Authorization':'Bearer ' + key }
+  });
+  if (!res.ok) throw new Error('kie.ai get task failed: ' + res.status);
+  const data = await res.json();
+  return data.data;
+}
+
+async function kiePollUntilDone(taskId, timeoutMs = 300000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    await new Promise(r => setTimeout(r, 5000));
+    const task = await kieGetTask(taskId);
+    // state field ใหม่ตาม API docs ล่าสุด
+    const state = task?.state || task?.status || task?.taskStatus || '';
+    if (state === 'success' || state === 'completed' || state === 'finished' || state === 'succeed') {
+      // parse resultJson ก่อน แล้วค่อย fallback ไป field เดิม
+      let url = null;
+      if (task?.resultJson) {
+        try {
+          const r = JSON.parse(task.resultJson);
+          url = r?.resultUrls?.[0] || r?.videoUrl || r?.urls?.[0];
+        } catch(e) {}
+      }
+      url = url || task?.videoUrl || task?.output?.videoUrl || task?.result?.videoUrl || task?.videos?.[0]?.url || task?.url;
+      if (url) return url;
+      throw new Error('kie.ai เสร็จแล้วแต่ไม่มี video URL');
+    }
+    if (state === 'fail' || state === 'failed' || state === 'error') {
+      throw new Error('kie.ai task failed: ' + (task?.failMsg || task?.failReason || 'unknown'));
+    }
+  }
+  throw new Error('kie.ai timeout — ใช้เวลานานเกิน 5 นาที');
+}
+
+// ─── Pipeline ─────────────────────────────────────────────────────────────────
+function setPipe(id, state) {
+  const el = document.getElementById('p-' + id);
+  const badge = document.getElementById('pb-' + id);
+  if (!el || !badge) return;
+  el.className = 'pipe' + ({wait:'',run:' active',done:' done',err:' error'}[state]||'');
+  badge.className = 'pipe-badge ' + {wait:'pb-wait',run:'pb-run',done:'pb-done',err:'pb-skip'}[state];
+  badge.textContent = {wait:'รอ',run:'⏳ กำลังทำ',done:'✓ เสร็จ',err:'ข้าม'}[state];
+}
+function setProgress(pct, label) {
+  document.getElementById('pipe-bar').style.width = pct + '%';
+  document.getElementById('pipe-pct').textContent = pct + '%';
+  document.getElementById('pipe-label').textContent = label;
+}
+function showPipeError(msg, detail) {
+  document.getElementById('pipe-error').style.display = 'block';
+  let thaiMsg = msg;
+  if (msg.includes('401') || msg.includes('Unauthorized')) thaiMsg = '❌ API Key ไม่ถูกต้อง — ตรวจสอบใน Settings';
+  else if (msg.includes('402') || msg.includes('credit') || msg.includes('insufficient')) thaiMsg = '❌ เครดิตหมด — เติมเงินที่ console ของ service นั้น';
+  else if (msg.includes('CORS') || msg.includes('fetch')) thaiMsg = '❌ CORS Error — ต้องเปิดผ่าน Netlify ไม่ใช่เปิดไฟล์ตรงๆ';
+  else if (msg.includes('JSON') || msg.includes('parse')) thaiMsg = '❌ ข้อมูลผิดรูปแบบ — ลองใหม่อีกครั้ง';
+  document.getElementById('pipe-error-msg').textContent = thaiMsg;
+  const dw = document.getElementById('error-detail-wrap');
+  const db = document.getElementById('error-detail-box');
+  if (dw && db) { dw.style.display = 'block'; db.textContent = 'Error: ' + msg + (detail ? '\nDetail: ' + detail : '') + '\nTime: ' + new Date().toLocaleTimeString('th-TH'); }
+}
+function resetCreate() {
+  document.getElementById('create-form').style.display = 'block';
+  document.getElementById('create-pipeline').style.display = 'none';
+}
+
+// ─── Scene Progress ───────────────────────────────────────────────────────────
+function renderScenes(scenes) {
+  const el = document.getElementById('scenes-preview');
+  el.innerHTML = scenes.map((s, i) => `
+    <div class="scene-card" id="scene-card-${i}">
+      <div class="scene-num">ฉาก ${i+1}</div>
+      <div class="scene-text">${s.narration}</div>
+      <span class="scene-status ss-wait" id="scene-status-${i}">รอ</span>
+    </div>`).join('');
+}
+function setSceneStatus(i, state) {
+  const card = document.getElementById('scene-card-' + i);
+  const badge = document.getElementById('scene-status-' + i);
+  if (!card || !badge) return;
+  const classMap = {wait:'',run:' active',done:' done',err:' error'};
+  card.className = 'scene-card' + (classMap[state]||'');
+  const lblMap = {wait:'รอ',run:'⏳ กำลังสร้าง',done:'✅ เสร็จ',err:'❌ ผิดพลาด'};
+  badge.className = 'scene-status ' + {wait:'ss-wait',run:'ss-run',done:'ss-done',err:'ss-err'}[state];
+  badge.textContent = lblMap[state];
+}
+
+// ─── Start Create ─────────────────────────────────────────────────────────────
+async function startCreate() {
+  if (!getKey('claude')) { toast('❌ ต้องการ Claude API Key'); nav('settings',null); return; }
+  if (!getKey('kie')) { toast('❌ ต้องการ kie.ai API Key'); nav('settings',null); return; }
+
+  const keyword = document.getElementById('f-keyword').value.trim();
+  if (!keyword) { toast('กรุณาใส่หัวข้อก่อนครับ'); return; }
+
+  const type = document.getElementById('f-type').value;
+  const style = document.getElementById('f-style').value;
+  const lang = document.getElementById('f-lang').value;
+
+  document.getElementById('create-form').style.display = 'none';
+  document.getElementById('create-pipeline').style.display = 'block';
+  document.getElementById('pipe-result').style.display = 'none';
+  document.getElementById('pipe-error').style.display = 'none';
+  document.getElementById('scenes-preview').innerHTML = '';
+  ['script','image','video1','extend'].forEach(id => setPipe(id,'wait'));
+  setProgress(0,'เริ่มต้น...');
+
+  const jobId = 'job_' + Date.now();
+  currentJobId = jobId;
+  const job = { id:jobId, keyword, type, style, lang, status:'pending', created_at:new Date().toISOString(), video_url:null, script:null, caption:null };
+  jobs.push(job); saveJobs();
+
+  try {
+    // ── STEP 1: Claude Script ──
+    setPipe('script','run');
+    setProgress(5,'Claude กำลังเขียน Script...');
+    job.status = 'running';
+
+    const langNote = lang === 'th' ? 'ภาษาไทยทั้งหมด' : lang === 'en' ? 'English only' : 'ภาษาไทย + English hashtags';
+    const script = await claudeChat(`คุณคือผู้เชี่ยวชาญสร้าง Script วิดีโอ Short-form มืออาชีพ
+
+สร้าง Script วิดีโอ 30 วินาที (5 ฉาก ฉากละ 6 วินาที) หัวข้อ: "${keyword}"
+ประเภท: ${type} | สไตล์: ${style} | ภาษา: ${langNote}
+
+ตอบเป็น JSON เท่านั้น ไม่มี markdown ไม่มี backtick:
+{
+  "title": "ชื่อวิดีโอ",
+  "reference_image_prompt": "Cinematic realistic photo prompt ภาษาอังกฤษ สำหรับ Grok Aurora สร้างภาพ reference ตัวละคร/ฉากหลัก ละเอียดมาก vertical 9:16",
+  "scenes": [
+    {"scene":1,"narration":"คำบรรยาย 6 วิ","video_prompt":"Cinematic continuation prompt ภาษาอังกฤษ สำหรับ Grok Video ฉากนี้"},
+    {"scene":2,"narration":"...","video_prompt":"..."},
+    {"scene":3,"narration":"...","video_prompt":"..."},
+    {"scene":4,"narration":"...","video_prompt":"..."},
+    {"scene":5,"narration":"...","video_prompt":"..."}
+  ],
+  "captions": [
+    "Caption แบบ 1 — เน้นอารมณ์ พร้อม hashtag",
+    "Caption แบบ 2 — เน้น keyword และ hashtag",
+    "Caption แบบ 3 — Call to action สั้นกระชับ"
+  ],
+  "best_caption_index": 0
+}`);
+
+    job.script = script;
+    job.caption = script.captions[script.best_caption_index || 0];
+    setPipe('script','done');
+    setProgress(20,'Script พร้อม! กำลังสร้างภาพ Reference...');
+    renderScenes(script.scenes);
+
+    // ── STEP 2: Grok Aurora Reference Image ──
+    setPipe('image','run');
+    const refImageUrl = await kieImage(script.reference_image_prompt);
+    job.reference_image = refImageUrl;
+    setPipe('image','done');
+    setProgress(35,'ภาพ Reference พร้อม! กำลังสร้างวิดีโอฉาก 1...');
+
+    // ── STEP 3: kie.ai Image-to-Video (ฉาก 1) ──
+    setPipe('video1','run');
+    setSceneStatus(0,'run');
+    document.getElementById('ps-video1').textContent = 'กำลังสร้างวิดีโอฉาก 1 จากภาพ Reference...';
+
+    const taskId1 = await kieCreateTaskWithRetry('grok-imagine/image-to-video', {
+      image_urls: [refImageUrl],
+      prompt: script.scenes[0].video_prompt,
+      mode: 'normal',
+      duration: '6',
+      resolution: '480p',
+      aspect_ratio: '9:16'
+    });
+
+    const videoUrl1 = await kiePollUntilDone(taskId1);
+    job.video_clips = [videoUrl1];
+    setSceneStatus(0,'done');
+    setPipe('video1','done');
+    setProgress(50,'ฉาก 1 เสร็จ! กำลังสร้างฉาก 2-5...');
+
+    // ── STEP 4: สร้างวิดีโอฉาก 2-5 แยกทีละคลิป ──
+    setPipe('extend','run');
+
+    for (let i = 1; i < script.scenes.length; i++) {
+      setSceneStatus(i,'run');
+      document.getElementById('ps-extend').textContent = 'กำลังสร้างวิดีโอฉาก ' + (i+1) + '/5...';
+      setProgress(50 + i * 10, 'สร้างฉาก ' + (i+1) + '...');
+
+      try {
+        const sceneTaskId = await kieCreateTaskWithRetry('grok-imagine/image-to-video', {
+          image_urls: [refImageUrl],
+          prompt: script.scenes[i].video_prompt,
+          mode: 'normal',
+          duration: '6',
+          resolution: '480p',
+          aspect_ratio: '9:16'
+        });
+
+        const sceneVideoUrl = await kiePollUntilDone(sceneTaskId);
+        job.video_clips.push(sceneVideoUrl);
+        setSceneStatus(i,'done');
+        saveJobs();
+      } catch (e) {
+        console.log('❌ Scene generation fail:', i + 1, e);
+        setSceneStatus(i,'err');
+        continue;
+      }
+    }
+
+    // ตอนนี้ preview แสดงคลิปแรกก่อน ส่วนคลิปทั้งหมดดูได้ในงานที่บันทึกไว้
+    const finalVideoUrl = job.video_clips[0];
+    job.video_url = finalVideoUrl;
+    job.status = 'ready';
+    setPipe('extend','done');
+    setProgress(100,'✅ สร้างคลิปครบทุกฉากแล้ว!');
+    saveJobs();
+
+    // ── แสดง Video Preview ──
+    showVideoPreview(finalVideoUrl, script);
+    loadDashboard();
+    renderJobs();
+
+  } catch(e) {
+    job.status = 'error'; job.error = e.message; saveJobs();
+    console.error('Pipeline error:', e);
+    showPipeError(e.message, e.stack || '');
+  }
+}
+
+// ─── Video Preview ────────────────────────────────────────────────────────────
+function showVideoPreview(videoUrl, script) {
+  document.getElementById('pipe-result').style.display = 'block';
+
+  // Set video player
+  const videoEl = document.getElementById('result-video');
+  videoEl.src = videoUrl;
+  videoEl.style.display = 'block';
+  videoEl.load();
+
+  // Update URL display
+  document.getElementById('video-url-mini').textContent = videoUrl;
+  document.getElementById('result-link').href = videoUrl;
+
+  // Show captions
+  const opts = document.getElementById('cap-opts');
+  opts.innerHTML = script.captions.map((c,i) => `
+    <div class="cap-opt ${i === (script.best_caption_index||0) ? 'selected':''}"
+         onclick="selectCap(this,'${encodeURIComponent(c)}')">
+      <div class="cap-num">แบบที่ ${i+1} ${i === (script.best_caption_index||0) ? '⭐ AI แนะนำ':''}</div>
+      ${c}
+    </div>`).join('');
+  document.getElementById('cap-edit').value = script.captions[script.best_caption_index || 0];
+}
+
+function togglePlay() {
+  const video = document.getElementById('result-video');
+  const overlay = document.getElementById('play-overlay');
+  const icon = document.getElementById('play-btn-icon');
+  if (video.paused) {
+    video.play();
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.style.display = 'none', 200);
+  } else {
+    video.pause();
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '1';
+    icon.textContent = '▶';
+  }
+}
+
+// Show overlay again when video ends
+document.addEventListener('DOMContentLoaded', () => {
+  const video = document.getElementById('result-video');
+  if (video) {
+    video.addEventListener('ended', () => {
+      const overlay = document.getElementById('play-overlay');
+      if (overlay) { overlay.style.display = 'flex'; overlay.style.opacity = '1'; }
+    });
+  }
+  document.getElementById('post-job').addEventListener('change', onJobSelect);
+});
+
+function copyVideoUrl() {
+  const url = document.getElementById('video-url-mini').textContent;
+  navigator.clipboard.writeText(url).then(() => toast('✅ Copy URL แล้ว!'));
+}
+
+function selectCap(el, enc) {
+  document.querySelectorAll('.cap-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('cap-edit').value = decodeURIComponent(enc);
+  const job = jobs.find(j => j.id === currentJobId);
+  if (job) { job.caption = decodeURIComponent(enc); saveJobs(); }
+}
+
+function goPost() {
+  nav('post', null);
+  document.querySelectorAll('.ni').forEach(n => { if (n.textContent.includes('โพสต์')) n.classList.add('active'); });
+  setTimeout(() => { document.getElementById('post-job').value = currentJobId; onJobSelect(); }, 100);
+}
+
+// ─── Post View ────────────────────────────────────────────────────────────────
+function loadPostView() {
+  const sel = document.getElementById('post-job');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— เลือก Job —</option>' +
+    jobs.filter(j => j.status === 'ready').map(j =>
+      `<option value="${j.id}" ${j.id === cur ? 'selected':''}>${j.keyword} · ${j.created_at?.slice(0,10)}</option>`
+    ).join('');
+  if (cur) onJobSelect();
+  renderAccountsGrid('post-accounts-grid');
+}
+
+function onJobSelect() {
+  const id = document.getElementById('post-job').value;
+  const wrap = document.getElementById('post-video-preview');
+  if (!id) { wrap.style.display = 'none'; return; }
+  const job = jobs.find(j => j.id === id);
+  if (!job) return;
+  wrap.style.display = 'block';
+
+  // Load video preview in post section
+  const postPlayer = document.getElementById('post-video-player');
+  if (job.video_url) {
+    postPlayer.src = job.video_url;
+    postPlayer.load();
+    document.getElementById('post-url-preview').textContent = job.video_url;
+    document.getElementById('post-video-link').href = job.video_url;
+  }
+  document.getElementById('post-caption').value = job.caption || '';
+}
+
+function toggleSchedule(checked) {
+  document.getElementById('sch-dt').style.display = checked ? 'block' : 'none';
+  document.getElementById('post-btn').textContent = checked ? '📅 ตั้งเวลาโพสต์' : '📤 โพสต์ไปทุกแพลตฟอร์มที่เลือก';
+}
+
+function openJob(id) {
+  currentJobId = id;
+  nav('post', null);
+  document.querySelectorAll('.ni').forEach(n => { if (n.textContent.includes('โพสต์')) n.classList.add('active'); });
+  setTimeout(() => { document.getElementById('post-job').value = id; onJobSelect(); }, 100);
+}
+
+async function submitPost() {
+  const jobId = document.getElementById('post-job').value;
+  if (!jobId) { toast('เลือก Job ก่อนครับ'); return; }
+  const job = jobs.find(j => j.id === jobId);
+  if (!job?.video_url) { toast('Job นี้ยังไม่มี video URL'); return; }
+
+  const selAccounts = [...document.querySelectorAll('#post-accounts-grid .pcheck.sel')];
+  if (!selAccounts.length) { toast('เลือก Account อย่างน้อย 1 ครับ'); return; }
+
+  const pfmKey = getKey('pfm');
+  if (!pfmKey) { toast('❌ ต้องการ PostForMe API Key'); nav('settings',null); return; }
+
+  const caption = document.getElementById('post-caption').value.trim();
+  const useSchedule = document.getElementById('use-schedule').checked;
+  const scheduledAt = useSchedule ? new Date(document.getElementById('sch-datetime').value).toISOString() : null;
+
+  const btn = document.getElementById('post-btn');
+  btn.disabled = true; btn.textContent = '⏳ กำลังโพสต์...';
+
+  const results = [];
+  for (const el of selAccounts) {
+    const accId = el.dataset.id;
+    const acc = accounts.find(a => a.id === accId);
+    if (!acc) continue;
+    try {
+      const r = await postToPostForMe(pfmKey, acc.pfm_id, job.video_url, caption, scheduledAt);
+      results.push({ name:acc.name, platform:acc.platform, status:'ok', pfm_id:r.id });
+      postLog.push({ job_id:jobId, acc_id:accId, posted_at:new Date().toISOString() });
+    } catch(e) {
+      results.push({ name:acc.name, platform:acc.platform, status:'error', error:e.message });
+    }
+  }
+  savePosts(); saveJobs();
+
+  document.getElementById('post-results').style.display = 'block';
+  const platIcon = {facebook:'📘',tiktok:'🎵',youtube:'📺'};
+  document.getElementById('post-results-list').innerHTML = results.map(r => `
+    <div class="post-result-item">
+      <span style="font-size:20px">${platIcon[r.platform]||'📱'}</span>
+      <div style="flex:1"><div style="font-size:14px;font-weight:500">${r.name}</div>${r.error ? '<div style="font-size:11px;color:var(--red)">'+r.error+'</div>' : ''}</div>
+      <span class="badge ${r.status==='ok'?'badge-green':'badge-red'}">${r.status==='ok'?'✓ สำเร็จ':'✗ ผิดพลาด'}</span>
+    </div>`).join('');
+
+  const ok = results.filter(r => r.status === 'ok').length;
+  toast((ok === results.length ? '🎉' : '⚠️') + ' โพสต์สำเร็จ ' + ok + '/' + results.length + ' แพลตฟอร์ม');
+  btn.disabled = false;
+  btn.textContent = useSchedule ? '📅 ตั้งเวลาโพสต์' : '📤 โพสต์ไปทุกแพลตฟอร์มที่เลือก';
+  loadDashboard();
+}
+
+async function postToPostForMe(apiKey, pfmAccountId, videoUrl, caption, scheduledAt) {
+  const payload = { account_id:pfmAccountId, media_url:videoUrl, caption, media_type:'video' };
+  if (scheduledAt) payload.scheduled_at = scheduledAt;
+  const res = await fetch('https://app.postforme.dev/api/v1/posts', {
+    method: 'POST',
+    headers: { 'Authorization':'Bearer ' + apiKey, 'Content-Type':'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('PostForMe: ' + res.status + ' ' + await res.text());
+  return res.json();
+}
+
+// ─── Accounts ─────────────────────────────────────────────────────────────────
+function addAccount() {
+  const name = document.getElementById('na-name').value.trim();
+  const pfm = document.getElementById('na-pfm').value.trim();
+  const platform = document.getElementById('na-platform').value;
+  if (!name || !pfm) { toast('กรอกข้อมูลให้ครบก่อนครับ'); return; }
+  accounts.push({ id:'acc_'+Date.now(), name, pfm_id:pfm, platform });
+  saveAccounts(); renderAccounts(); toast('✅ เพิ่ม Account แล้ว');
+  document.getElementById('na-name').value = '';
+  document.getElementById('na-pfm').value = '';
+}
+function deleteAccount(id) { accounts = accounts.filter(a => a.id !== id); saveAccounts(); renderAccounts(); toast('ลบแล้ว'); }
+function renderAccounts() {
+  const platIcon = {facebook:'📘',tiktok:'🎵',youtube:'📺'};
+  const el = document.getElementById('accounts-list');
+  if (!accounts.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📱</div><div>ยังไม่มี Account</div></div>'; return; }
+  el.innerHTML = accounts.map(a => `
+    <div class="job-item" style="cursor:default">
+      <span style="font-size:22px">${platIcon[a.platform]||'📱'}</span>
+      <div style="flex:1"><div style="font-size:14px;font-weight:500">${a.name}</div><div style="font-size:11px;color:var(--text3)">${a.platform} · ID: ${a.pfm_id}</div></div>
+      <button class="btn btn-red btn-sm" onclick="deleteAccount('${a.id}')">ลบ</button>
+    </div>`).join('');
+  renderAccountsGrid('post-accounts-grid');
+}
+function renderAccountsGrid(gridId) {
+  const platIcon = {facebook:'📘',tiktok:'🎵',youtube:'📺'};
+  const el = document.getElementById(gridId);
+  if (!el) return;
+  if (!accounts.length) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:10px 0">ยังไม่มี Account</div>'; return; }
+  el.innerHTML = accounts.map(a => `
+    <label class="pcheck" data-id="${a.id}" onclick="toggleAccount(this)">
+      <input type="checkbox" style="display:none">
+      <div><div class="pcheck-name">${platIcon[a.platform]||'📱'} ${a.name}</div><div class="pcheck-plat">${a.platform}</div></div>
+    </label>`).join('');
+}
+function toggleAccount(el) { el.classList.toggle('sel'); }
+
+// ─── Test Keys ────────────────────────────────────────────────────────────────
+async function testAllKeys() {
+  const resultEl = document.getElementById('key-test-result');
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = '<div class="alert alert-gold">⏳ กำลังทดสอบ API Keys...</div>';
+  let html = '';
+
+  // Test Claude
+  const claudeKey = getKey('claude');
+  if (!claudeKey) { html += '<div class="alert alert-red" style="margin-bottom:8px">❌ Claude: ยังไม่ได้ใส่ Key</div>'; }
+  else {
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST', headers:{'Content-Type':'application/json','x-api-key':claudeKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:10,messages:[{role:'user',content:'Hi'}]})
+      });
+      html += res.status === 200
+        ? '<div class="alert alert-green" style="margin-bottom:8px">✅ Claude API Key ใช้ได้!</div>'
+        : '<div class="alert alert-red" style="margin-bottom:8px">❌ Claude: Error ' + res.status + '</div>';
+    } catch(e) { html += '<div class="alert alert-gold" style="margin-bottom:8px">⚠️ Claude: ' + e.message + '</div>'; }
+  }
+
+
+  // Test kie.ai
+  const kieKey = getKey('kie');
+  if (!kieKey) { html += '<div class="alert alert-red" style="margin-bottom:8px">❌ kie.ai: ยังไม่ได้ใส่ Key</div>'; }
+  else {
+    try {
+      const res = await fetch('https://api.kie.ai/api/v1/account/info', { headers:{'Authorization':'Bearer ' + kieKey} });
+      html += (res.status === 200 || res.status === 404)
+        ? '<div class="alert alert-green" style="margin-bottom:8px">✅ kie.ai API Key ใช้ได้!</div>'
+        : '<div class="alert alert-red" style="margin-bottom:8px">❌ kie.ai: Error ' + res.status + '</div>';
+    } catch(e) { html += '<div class="alert alert-gold" style="margin-bottom:8px">⚠️ kie.ai: ' + e.message + '</div>'; }
+  }
+
+  resultEl.innerHTML = html || '<div class="alert alert-red">ไม่มี Key ที่ทดสอบได้</div>';
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+refreshDots();
+loadDashboard();
+</script>
+</body>
+</html>
+
   --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--sur:#16161f;--bdr:#2a2a38;--bdr2:#3a3a50;
   --text:#e8e8f0;--text2:#9090b0;--text3:#50506a;
   --gold:#f0c060;--gold2:#ffd878;--goldd:#c09030;
